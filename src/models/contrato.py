@@ -1,0 +1,82 @@
+from typing import List
+from datetime import datetime
+
+from src.models.pago import ConceptoNomina
+from src.models.suspension import SuspensionContrato
+
+class ContratoLaboral:
+    def __init__(self, fecha_inicio: datetime, fecha_final: datetime, tipo_contrato: str, regimen_ley_50: bool) -> None:
+        self.fecha_inicio: datetime = fecha_inicio
+        self.fecha_final: datetime = fecha_final
+        self.tipo_contrato: str = tipo_contrato
+        self.regimen_ley_50: bool = regimen_ley_50
+        
+        # Listas internas para implementar la relación de agregación (POO)
+        self.pagos: List[ConceptoNomina] = []
+        self.suspensiones: List[SuspensionContrato] = []
+
+    def agregar_pago(self, pago: ConceptoNomina) -> None:
+        """Asocia un concepto de pago o salario al contrato."""
+        self.pagos.append(pago)
+
+    def agregar_suspension(self, suspension: SuspensionContrato) -> None:
+        """Registra una novedad de suspensión laboral en el contrato."""
+        self.suspensiones.append(suspension)
+
+    def calcular_dias_comerciales(self) -> int:
+        """
+        Calcula los días totales de vinculación usando el calendario comercial (360 días al año).
+        Fórmula legal colombiana: (Año2 - Año1)*360 + (Mes2 - Mes1)*30 + (Día2 - Día1) + 1
+        """
+        f_in = self.fecha_inicio
+        f_fin = self.fecha_final
+        
+        dias = (f_fin.year - f_in.year) * 360 + (f_fin.month - f_in.month) * 30 + (f_fin.day - f_in.day) + 1
+        return max(0, dias)
+
+    def obtener_base_salarial(self) -> float:
+        """Filtra los pagos agregados y retorna la sumatoria de los conceptos salariales."""
+        return sum(pago.valor for pago in self.pagos if pago.es_salarial)
+
+    def obtener_subsidio_transporte_aplicable(self, valor_aux_historico: float, smlmv_historico: float) -> float:
+        """
+        Determina si el trabajador devenga menos o igual a 2 SMLMV de la época 
+        para saber si se le debe sumar el auxilio de transporte a la base prestacional.
+        """
+        base_salarial = self.obtener_base_salarial()
+        if base_salarial <= (smlmv_historico * 2):
+            return valor_aux_historico
+        return 0.0
+
+    def calcular_total_dias_suspension(self, afecta_concepto: str) -> int:
+        """
+        Suma los días de suspensiones que afectan a un concepto específico 
+        (ej: 'cesantias' o 'vacaciones' se ven afectadas, 'prima' no).
+        """
+        total_dias = 0
+        for susp in self.suspensiones:
+            if afecta_concepto.lower() in ['cesantias', 'vacaciones'] and susp.debe_descontarse():
+                total_dias += susp.dias
+        return total_dias
+
+    def __repr__(self) -> str:
+        """Representación elegante y ejecutiva del estado del contrato."""
+        formato_fecha = "%d/%m/%Y"
+        txt_regimen = "Ley 50 de 1990 (Anualizado)" if self.regimen_ley_50 else "Pre-Ley 50 (Retroactivo)"
+        
+        # Cálculos rápidos para el reporte
+        dias_brutos = self.calcular_dias_comerciales()
+        base_sal = self.obtener_base_salarial()
+        
+        lines = [
+            "╔" + "═" * 58 + "╗",
+            f"║ 📄 CONTRATO LABORAL ({self.tipo_contrato.upper()})".ljust(59) + "║",
+            "╠" + "═" * 58 + "╣",
+            f"║ 🗓️  Periodo: {self.fecha_inicio.strftime(formato_fecha)} al {self.fecha_final.strftime(formato_fecha)}".ljust(59) + "║",
+            f"║ ⏳ Tiempo Bruto: {dias_brutos} días comerciales".ljust(59) + "║",
+            f"║ ⚖️  Régimen: {txt_regimen}".ljust(59) + "║",
+            f"║ 💰 Salario Base Ordinario: ${base_sal:,.2f}".ljust(59) + "║",
+            f"║ 📊 Novedades: {len(self.pagos)} Conceptos | {len(self.suspensiones)} Suspensiones".ljust(59) + "║",
+            "╚" + "═" * 58 + "╝"
+        ]
+        return "\n".join(lines)
