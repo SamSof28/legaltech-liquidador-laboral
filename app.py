@@ -43,8 +43,8 @@ es_ley_50 = True if "Anualizado" in regimen else False
 # Valores históricos de referencia para el año del cálculo (Ej: 2023)
 st.sidebar.markdown("---")
 st.sidebar.subheader("⚙️ Parámetros de Ley del Año de Cierre")
-smlmv_input = st.sidebar.number_input("SMLMV Año de Liquidación ($)", value=1160000)
-aux_trans_input = st.sidebar.number_input("Auxilio Transporte Año ($)", value=140606)
+smlmv_input = st.sidebar.number_input("SMLMV Año de Liquidación ($)", value=1750905)
+aux_trans_input = st.sidebar.number_input("Auxilio Transporte Año ($)", value=250000)
 
 # Validación rápida de seguridad jurídica
 if fecha_inicio > fecha_final:
@@ -55,31 +55,48 @@ if fecha_inicio > fecha_final:
 # ==========================================
 tab1, tab2, tab3 = st.tabs(["💵 Gestión de Pagos (Art. 127/128)", "📉 Suspensiones (Art. 51/53)", "🧮 Motor de Liquidación"])
 
-with tab1:
-    st.subheader("Adición de Conceptos Mensuales Devengados")
-    st.caption("Determina qué conceptos constituyen o no salario para la base prestacional.")
-    
-    col1, col2, col3 = st.columns([3, 2, 2])
-    with col1:
-        nombre_pago = st.text_input("Nombre del Concepto", placeholder="Ej: Salario Base, Horas Extras...")
-    with col2:
-        valor_pago = st.number_input("Monto Mensual ($)", min_value=0.0, value=0.0, step=50000.0)
-    with col3:
-        es_salarial = st.checkbox("¿Constituye Salario? (Art. 127 CST)", value=True)
-        btn_pago = st.button("➕ Agregar Pago")
-        
-    if btn_pago and nombre_pago:
-        st.session_state.pagos_lista.append({"nombre": nombre_pago, "valor": valor_pago, "es_salarial": es_salarial})
-        st.success(f"Agregado: {nombre_pago}")
+# Diccionario de conceptos con clasificación legal automática
+CONCEPTOS_PREDEFINIDOS = {
+    "Salario Base Mensual":           {"es_salarial": True,  "descripcion": "Su pago fijo mensual acordado"},
+    "Horas Extra (Diurnas/Nocturnas)":{"es_salarial": True,  "descripcion": "Trabajo por encima de la jornada ordinaria"},
+    "Comisiones por Ventas":          {"es_salarial": True,  "descripcion": "Porcentaje sobre ventas o metas"},
+    "Viáticos Permanentes":           {"es_salarial": True,  "descripcion": "Gastos de viaje habituales que se vuelven salario"},
+    "Pago en Especie (Casa, Carro)":  {"es_salarial": True,  "descripcion": "Beneficios no monetarios como parte del salario"},
+    "Bonificación por Productividad": {"es_salarial": False, "descripcion": "Bonos ocasionales pactados como no salariales"},
+    "Auxilio de Alimentación":        {"es_salarial": False, "descripcion": "Subsidio para comidas, no constituye salario"},
+    "Auxilio de Rodamiento":          {"es_salarial": False, "descripcion": "Reembolso de gasolina/transporte propio"},
+    "Viáticos Accidentales":          {"es_salarial": False, "descripcion": "Gastos de viaje ocasionales"},
+    "Prima Extraegal (Libre Acuerdo)":{"es_salarial": False, "descripcion": "Primas adicionales pactadas como no salariales"},
+    "Dotación (Calzado/Ropa)":        {"es_salarial": False, "descripcion": "Elementos de trabajo entregados por ley"},
+}
 
-    # Mostrar tabla resumen de pagos actuales
-    if st.session_state.pagos_lista:
-        df_pagos = pd.DataFrame(st.session_state.pagos_lista)
-        df_pagos["Tipo Jurídico"] = df_pagos["es_salarial"].apply(lambda x: "🟢 Salarial" if x else "🔴 No Salarial")
-        st.dataframe(df_pagos[["nombre", "valor", "Tipo Jurídico"]], use_container_width=True)
-        if st.button("🗑️ Limpiar Todos los Pagos"):
-            st.session_state.pagos_lista = []
-            st.rerun()
+with tab1:
+    st.subheader("¿Qué pagos recibía mensualmente?")
+    st.caption("Selecciona cada tipo de pago. Nosotros nos encargamos de clasificarlo correctamente según la ley colombiana.")
+
+    concepto_sel = st.selectbox(
+        "Tipo de pago recibido",
+        list(CONCEPTOS_PREDEFINIDOS.keys()),
+        help="Elige el que más se parezca a lo que recibías"
+    )
+    
+    info = CONCEPTOS_PREDEFINIDOS[concepto_sel]
+    
+    # Mostrar explicación amigable
+    tipo_badge = "🟢 Cuenta para sus prestaciones" if info["es_salarial"] else "🔵 No afecta sus prestaciones"
+    st.info(f"**{tipo_badge}** — {info['descripcion']}")
+    
+    valor_pago = st.number_input("¿Cuánto recibía mensualmente por este concepto? ($)", 
+                                  min_value=0.0, value=0.0, step=50000.0,
+                                  help="Ingresa el valor promedio mensual")
+    
+    if st.button("➕ Agregar este pago"):
+        st.session_state.pagos_lista.append({
+            "nombre": concepto_sel,
+            "valor": valor_pago,
+            "es_salarial": info["es_salarial"]
+        })
+        st.success(f"✅ Agregado: {concepto_sel}")
 
 with tab2:
     st.subheader("Registro de Suspensiones Contractuales e Incapacidades")
