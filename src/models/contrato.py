@@ -5,6 +5,8 @@ from src.models.pago import ConceptoNomina
 from src.models.suspension import SuspensionContrato
 
 class ContratoLaboral:
+    """Esta Clase Representa el contrato o ciclo de vida del trabajador cubriendo (fechas, tipo de contrato y tipo de regimen)
+    """
     def __init__(self, fecha_inicio: datetime, fecha_final: datetime, tipo_contrato: str, regimen_ley_50: bool) -> None:
         self.fecha_inicio: datetime = fecha_inicio
         self.fecha_final: datetime = fecha_final
