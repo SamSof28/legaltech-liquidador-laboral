@@ -30,8 +30,8 @@ tipo_contrato = st.sidebar.selectbox(
     ["Término Indefinido", "Término Fijo", "Obra o Labor"]
 )
 
-fecha_inicio = st.sidebar.date_input("Fecha de Inicio de Labores", datetime(1984, 8, 3))
-fecha_final = st.sidebar.date_input("Fecha de Terminación", datetime(2023, 9, 25))
+fecha_inicio = st.sidebar.date_input("Fecha de Inicio de Labores", datetime(1984, 8, 3), datetime(1984, 1, 1), datetime(2026, 1, 1))
+fecha_final = st.sidebar.date_input("Fecha de Terminación", datetime(2023, 9, 25), datetime(1984, 1, 1), datetime(2026, 7, 12))
 
 regimen = st.sidebar.radio(
     "Régimen de Cesantías (Ley 50/1990)",
@@ -53,7 +53,7 @@ if fecha_inicio > fecha_final:
 # ==========================================
 # CUERPO PRINCIPAL: TRABAJO CON NOVEDADES
 # ==========================================
-tab1, tab2, tab3 = st.tabs(["💵 Gestión de Pagos (Art. 127/128)", "📉 Suspensiones (Art. 51/53)", "🧮 Motor de Liquidación"])
+tab1, tab2, tab3, tab4 = st.tabs(["💵 Gestión de Pagos (Art. 127/128)", "📉 Suspensiones (Art. 51/53)", "🧮 Motor de Liquidación", "📑 Guia de Usuario"])
 
 # Diccionario de conceptos con clasificación legal automática
 CONCEPTOS_PREDEFINIDOS = {
@@ -104,6 +104,7 @@ with tab2:
     
     col1, col2, col3, col4 = st.columns([3, 1, 1, 1])
     with col1:
+        
         tipo_susp = st.selectbox(
             "Causa Jurídica",
             [
@@ -216,3 +217,10 @@ with tab3:
                     else:
                         st.write(f"* Base imponible sobre Cesantías Acumuladas: ${r['base_cesantias']:,.2f}")
                         st.write(f"* Tasa aplicada por Ley: {r['tasa_legal']} en proporción a {r['dias_netos_cesantias']} días netos.")
+
+# ==========================================
+# TAB 4: Guia de Usuario
+# ==========================================
+
+with tab4:
+    st.subheader("Explicación de uso de la calculadora liquidaciones")
