@@ -1,10 +1,6 @@
 name: CI — LiquidaYA
 
-on:
-  push:
-    branches: [main, develop]
-  pull_request:
-    branches: [main]
+on: [push, pull_request]
 
 jobs:
   tests:
@@ -12,31 +8,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: 🐍 Python 3.11
+      - name: 🐍 Configurar Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-          cache: pip
 
       - name: 📦 Instalar dependencias
-        run: |
-          pip install streamlit pandas pytest
-
-      - name: 🔍 Verificar estructura del proyecto
-        run: |
-          echo "📁 Archivos encontrados:"
-          find . -name "*.py" | grep -v __pycache__ | sort
+        run: pip install streamlit pandas pytest
 
       - name: 🧪 Correr tests
-        run: |
-          python pytest test/test_liquidador.py
-
-      - name: ✅ Verificar importaciones del backend
-        run: |
-          python -c "from src.models.contrato import ContratoLaboral; print('✅ ContratoLaboral OK')"
-          python -c "from src.models.pago import ConceptoNomina; print('✅ ConceptoNomina OK')"
-          python -c "from src.models.suspension import SuspensionContrato; print('✅ SuspensionContrato OK')"
-          python -c "from src.engine.calculador import CalculadorEngine; print('✅ CalculadorEngine OK')"
+        run: pytest test/test_liquidador.py -v --tb=short
