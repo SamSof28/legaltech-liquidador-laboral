@@ -32,7 +32,7 @@ jobs:
 
       - name: 🧪 Correr tests
         run: |
-          python -m pytest test/test_liquidador.py -v --tb=short
+          pytest test/test_liquidador.py
 
       - name: ✅ Verificar importaciones del backend
         run: |
