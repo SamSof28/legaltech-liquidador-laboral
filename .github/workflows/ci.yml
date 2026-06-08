@@ -18,5 +18,8 @@ jobs:
       - name: 📦 Instalar dependencias
         run: pip install streamlit pandas pytest
 
+      - name: 📁 Verificar estructura (debug)
+        run: find . -name "test_*.py" | sort
+
       - name: 🧪 Correr tests
-        run: pytest test/test_liquidador.py -v --tb=short
+        run: python -m pytest -v --tb=short
