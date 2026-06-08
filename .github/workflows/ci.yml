@@ -32,7 +32,7 @@ jobs:
 
       - name: 🧪 Correr tests
         run: |
-          pytest test/test_liquidador.py
+          python pytest test/test_liquidador.py
 
       - name: ✅ Verificar importaciones del backend
         run: |
