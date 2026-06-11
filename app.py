@@ -136,7 +136,7 @@ fecha_inicio = st.sidebar.date_input(
 )
 fecha_final = st.sidebar.date_input(
     "📅 Fecha de Terminación",
-    datetime(2024, 12, 31),
+    datetime(2024, 12, 30),
     min_value=datetime(1950, 1, 1),
     max_value=datetime(2026, 12, 31),
     help="Último día de trabajo (inclusive)"
