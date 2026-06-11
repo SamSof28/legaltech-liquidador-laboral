@@ -589,7 +589,7 @@ with tab4:
 
     col_r1, col_r2, col_r3 = st.columns(3)
     recursos = [
-        ("🏛️", "Ministerio de Trabajo", "Línea gratuita: **01 8000 112018**\nAsesoría laboral oficial y gratuita para trabajadores colombianos."),
+        ("🏛️", "Ministerio de Trabajo", "Línea gratuita: **01 8000 112518**\nAsesoría laboral oficial y gratuita para trabajadores colombianos."),
         ("⚖️", "Inspección de Trabajo", "Puedes presentar quejas ante la Inspección de Trabajo de tu municipio si consideras que tu liquidación fue incorrecta."),
         ("📱", "Código Sustantivo del Trabajo", "Consulta el CST completo en:\nwww.secretariasenado.gov.co\nEs público y gratuito."),
     ]
