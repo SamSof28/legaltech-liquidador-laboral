@@ -129,14 +129,14 @@ tipo_contrato = st.sidebar.selectbox(
 
 fecha_inicio = st.sidebar.date_input(
     "📅 Fecha de Inicio de Labores",
-    datetime(2023, 1, 1),
+    datetime(2024, 1, 1),
     min_value=datetime(1950, 1, 1),
     max_value=datetime(2026, 12, 31),
     help="Primer día de trabajo efectivo"
 )
 fecha_final = st.sidebar.date_input(
     "📅 Fecha de Terminación",
-    datetime(2023, 12, 31),
+    datetime(2024, 12, 31),
     min_value=datetime(1950, 1, 1),
     max_value=datetime(2026, 12, 31),
     help="Último día de trabajo (inclusive)"
@@ -160,7 +160,7 @@ SMLMV_POR_ANIO = {
     2020: 877_803,   2019: 828_116,   2018: 781_242,
 }
 AUX_TRANS_POR_ANIO = {
-    2026: 250_000,  2025: 200_000,  2024: 162_000,
+    2026: 249_095,  2025: 200_000,  2024: 162_000,
     2023: 140_606,  2022: 117_172,  2021: 106_454,
     2020: 102_854,  2019: 97_032,   2018: 88_211,
 }
