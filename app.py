@@ -191,20 +191,177 @@ tab1, tab2, tab3, tab4 = st.tabs([
 ])
 
 # ─── Diccionario de conceptos ─────────────────────────────────────
-CONCEPTOS_PREDEFINIDOS = {
-    "Salario Base Mensual":            {"es_salarial": True,  "descripcion": "Su pago fijo mensual acordado en el contrato", "icono": "💼"},
-    "Horas Extra (Diurnas/Nocturnas)": {"es_salarial": True,  "descripcion": "Trabajo adicional por encima de la jornada ordinaria de 8 horas", "icono": "⏱️"},
-    "Comisiones por Ventas":           {"es_salarial": True,  "descripcion": "Porcentaje sobre ventas o cumplimiento de metas habituales", "icono": "📈"},
-    "Viáticos Permanentes":            {"es_salarial": True,  "descripcion": "Gastos de viaje que se pagan de forma habitual y se convierten en salario", "icono": "✈️"},
-    "Pago en Especie (Casa, Carro)":   {"es_salarial": True,  "descripcion": "Beneficios no monetarios recibidos como parte del salario (hasta 50% del salario total)", "icono": "🏠"},
-    "Bonificación por Productividad":  {"es_salarial": False, "descripcion": "Bonos ocasionales pactados expresamente como no constitutivos de salario", "icono": "🎁"},
-    "Auxilio de Alimentación":         {"es_salarial": False, "descripcion": "Subsidio para comidas pactado como no salarial (ej: Sodexo, Bigpass)", "icono": "🍽️"},
-    "Auxilio de Rodamiento":           {"es_salarial": False, "descripcion": "Reembolso de gastos de gasolina o uso de vehículo propio", "icono": "🚗"},
-    "Viáticos Accidentales":           {"es_salarial": False, "descripcion": "Gastos de viaje por desplazamientos esporádicos, no habituales", "icono": "🗺️"},
-    "Prima Extraegal (Libre Acuerdo)": {"es_salarial": False, "descripcion": "Primas adicionales a la legal, pactadas como no salariales en el contrato", "icono": "💰"},
-    "Dotación (Calzado/Ropa)":         {"es_salarial": False, "descripcion": "Elementos de trabajo entregados por ley, nunca constituyen salario", "icono": "👔"},
-}
 
+CONCEPTOS_PREDEFINIDOS = {
+
+    # ══════════════════════════════════════════════════════
+    # ✅ SALARIALES — Art. 127 CST
+    # Cuentan para liquidar prestaciones sociales
+    # ══════════════════════════════════════════════════════
+
+    "Salario Ordinario Fijo": {
+        "es_salarial": True,
+        "descripcion": "Remuneración ordinaria fija pactada en el contrato (ej: $2.000.000 al mes).",
+        "icono": "💼",
+        "referencia": "Art. 127 CST — Numeral 1"
+    },
+    "Salario Variable (por día o destajo)": {
+        "es_salarial": True,
+        "descripcion": "Remuneración variable por día laborado o producción (ej: $80.000 por día).",
+        "icono": "📅",
+        "referencia": "Art. 127 CST — Numeral 1"
+    },
+    "Trabajo Suplementario / Horas Extras": {
+        "es_salarial": True,
+        "descripcion": "Valor pagado por trabajo adicional a la jornada ordinaria de 8 horas, diurno o nocturno.",
+        "icono": "⏱️",
+        "referencia": "Art. 127 CST — Trabajo suplementario"
+    },
+    "Trabajo en Días de Descanso Obligatorio": {
+        "es_salarial": True,
+        "descripcion": "Pago por trabajar en domingos, festivos o días de descanso remunerado.",
+        "icono": "📆",
+        "referencia": "Art. 127 CST — Días de descanso obligatorio"
+    },
+    "Porcentajes sobre Ventas / Comisiones": {
+        "es_salarial": True,
+        "descripcion": "Comisiones habituales por ventas, metas o porcentaje sobre negociaciones.",
+        "icono": "📈",
+        "referencia": "Art. 127 CST — Porcentajes sobre ventas y comisiones"
+    },
+    "Bonificaciones Habituales": {
+        "es_salarial": True,
+        "descripcion": "Bonificaciones que se pagan de forma regular y periódica, no ocasional. Su habitualidad las convierte en salario aunque no se llamen así.",
+        "icono": "🔄",
+        "referencia": "Art. 127 CST — Bonificaciones habituales"
+    },
+    "Sobresueldos": {
+        "es_salarial": True,
+        "descripcion": "Pagos adicionales al salario base, reconocidos de forma regular por el empleador.",
+        "icono": "➕",
+        "referencia": "Art. 127 CST — Sobresueldos"
+    },
+    "Viáticos Habituales — Manutención y Alojamiento": {
+        "es_salarial": True,
+        "descripcion": "Parte de los viáticos habituales destinada a alimentación, alojamiento, lavandería y elementos de aseo. Solo esta porción es salario.",
+        "icono": "🏨",
+        "referencia": "Art. 127 CST — Viáticos habituales (manutención y alojamiento)"
+    },
+    "Salario en Especie (sin pacto de exclusión)": {
+        "es_salarial": True,
+        "descripcion": "Beneficios no monetarios como vivienda, vehículo o alimentación que forman parte del salario cuando no existe pacto expreso de exclusión salarial.",
+        "icono": "🏠",
+        "referencia": "Art. 127 CST — Salario en especie"
+    },
+    "Propina Pagada por el Empleador": {
+        "es_salarial": True,
+        "descripcion": "Propina que reconoce y paga directamente el empleador al trabajador (distinta a la propina voluntaria del cliente).",
+        "icono": "💵",
+        "referencia": "Art. 127 CST — Propina del empleador"
+    },
+
+    # ══════════════════════════════════════════════════════
+    # 🔵 NO SALARIALES — Art. 128 CST
+    # NO cuentan para liquidar prestaciones sociales
+    # ══════════════════════════════════════════════════════
+
+    "Primas Ocasionales (Mera Liberalidad)": {
+        "es_salarial": False,
+        "descripcion": "Primas que el empleador paga esporádicamente por decisión propia, sin obligación contractual ni periodicidad fija.",
+        "icono": "🎁",
+        "referencia": "Art. 128 CST — Numeral 1"
+    },
+    "Bonificaciones Ocasionales (Mera Liberalidad)": {
+        "es_salarial": False,
+        "descripcion": "Bonos que se entregan de vez en cuando sin periodicidad ni obligación. Aunque sean habituales en la práctica, si hay pacto expreso de no salarialidad no constituyen salario.",
+        "icono": "🎀",
+        "referencia": "Art. 128 CST — Numeral 1"
+    },
+    "Participación de Utilidades": {
+        "es_salarial": False,
+        "descripcion": "Distribución de utilidades de la empresa al trabajador. Puede ser habitual y aun así no constituir salario — es un acto de liberalidad del empleador.",
+        "icono": "📊",
+        "referencia": "Art. 128 CST — Numeral 2"
+    },
+    "Gastos de Representación": {
+        "es_salarial": False,
+        "descripcion": "Dinero entregado para cubrir gastos de imagen o representación de la empresa ante clientes (restaurantes, floristerías, hoteles, clubes).",
+        "icono": "🍽️",
+        "referencia": "Art. 128 CST — Numeral 4"
+    },
+    "Viáticos de Transporte (Habituales)": {
+        "es_salarial": False,
+        "descripcion": "Parte de los viáticos habituales destinada exclusivamente al transporte. Solo la porción de transporte no es salario; la de manutención sí lo es.",
+        "icono": "🚌",
+        "referencia": "Art. 128 CST — Numeral 9"
+    },
+    "Viáticos Ocasionales (Accidentales)": {
+        "es_salarial": False,
+        "descripcion": "Viáticos pagados por desplazamientos esporádicos y no habituales. Al ser ocasionales, no constituyen salario en ninguna de sus partes.",
+        "icono": "🗺️",
+        "referencia": "Art. 128 CST — Numeral 8"
+    },
+    "Auxilio de Transporte (Legal)": {
+        "es_salarial": False,
+        "descripcion": "Subsidio legal de transporte establecido por el Gobierno ($250.000 en 2026). No es salario, pero por ley se incluye en la base de liquidación de cesantías y prima si el salario es ≤ 2 SMLMV.",
+        "icono": "🚇",
+        "referencia": "Art. 128 CST + Ley 15/1959 — Nota: se suma a base prestacional si salario ≤ 2 SMLMV"
+    },
+    "Medios de Transporte (Vehículo, Gasolina, Parqueadero)": {
+        "es_salarial": False,
+        "descripcion": "Vehículos, aceite, gasolina, parqueaderos, pasajes aéreos, taxis o cuotas de vehículo por leasing entregados para el desempeño de funciones.",
+        "icono": "🚗",
+        "referencia": "Art. 128 CST — Numeral 4"
+    },
+    "Auxilio de Alimentación (Pactado como No Salarial)": {
+        "es_salarial": False,
+        "descripcion": "Subsidio de alimentación pactado expresamente como no constitutivo de salario (ej: Sodexo, Bigpass, casino empresarial).",
+        "icono": "🥗",
+        "referencia": "Art. 128 CST — Numeral 6"
+    },
+    "Habitación o Vivienda (Pactada como No Salarial)": {
+        "es_salarial": False,
+        "descripcion": "Vivienda o subsidio de arrendamiento reconocido con pacto expreso de no salarialidad.",
+        "icono": "🏘️",
+        "referencia": "Art. 128 CST — Numeral 6"
+    },
+    "Prima Técnica (Antigüedad, Escolaridad, Desplazamiento)": {
+        "es_salarial": False,
+        "descripcion": "Primas extrasalariales pactadas: por años de servicio, nivel educativo o desplazamiento, cuando existe acuerdo expreso de no salarialidad.",
+        "icono": "🎓",
+        "referencia": "Art. 128 CST — Numeral 6"
+    },
+    "Prima Extralegal (Navidad, Vacaciones, etc.)": {
+        "es_salarial": False,
+        "descripcion": "Primas adicionales a las legales (prima semestral) pactadas como no salariales en el contrato o convención colectiva.",
+        "icono": "🎄",
+        "referencia": "Art. 128 CST — Numeral 6"
+    },
+    "Dotación (Calzado y Vestido de Labor)": {
+        "es_salarial": False,
+        "descripcion": "Calzado y ropa de trabajo entregados por ley tres veces al año. Nunca constituyen salario.",
+        "icono": "👔",
+        "referencia": "Art. 128 CST — Numeral 5 (prestación social)"
+    },
+    "Bonos (Alimentación, Navidad, etc.)": {
+        "es_salarial": False,
+        "descripcion": "Bonos en especie o electrónicos entregados al trabajador. No constituyen salario cuando están pactados como no salariales.",
+        "icono": "🎟️",
+        "referencia": "Art. 128 CST — Numeral 10"
+    },
+    "Propina del Cliente": {
+        "es_salarial": False,
+        "descripcion": "Propina voluntaria que el cliente deja directamente al trabajador. No la paga el empleador, por tanto no constituye salario.",
+        "icono": "🪙",
+        "referencia": "Art. 128 CST — Numeral 11"
+    },
+    "Excedentes de Economía Solidaria": {
+        "es_salarial": False,
+        "descripcion": "Excedentes distribuidos en cooperativas y empresas de economía solidaria a sus asociados trabajadores.",
+        "icono": "🤝",
+        "referencia": "Art. 128 CST — Numeral 3"
+    },
+}
 # ══════════════════════════════════════════════════════════════════
 # TAB 1: PAGOS
 # ══════════════════════════════════════════════════════════════════
